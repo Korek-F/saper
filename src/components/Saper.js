@@ -11,7 +11,7 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
     const openCell = (id) => {
         const cell_object = allCells.filter(e => e.id === id)[0]
 
-        if (!cell_object.opened && !gameEnded) {
+        if (!cell_object.opened && !gameEnded && !cell_object.flag) {
 
             const cN = columnNumber
             const rN = rowNumber
@@ -29,6 +29,7 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
 
             //If the cell has bomb - end the game
             if (cell_object.bomb) {
+                setAllCells(state => state.map((el, i) => el.bomb === true ? { ...el, opened: true } : el))
                 setGameEnded(true)
             }
 
@@ -42,8 +43,24 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
         }
     }
 
-    const rows = Array(rowNumber).fill(0).map((_, i) => <SaperRow key={i} columnNumber={columnNumber} rowNumber={rowNumber} rowId={i} allCells={allCells}
-        openCell={openCell} boxSize={boxSize} />)
+    const markAsBomb = (id) => {
+        const cell_object = allCells.filter(e => e.id === id)[0]
+        if (!cell_object.opened && !gameEnded) {
+            const is_flag = !cell_object.flag
+            setAllCells(state => state.map((el, i) => i + 1 === id ? { ...el, flag: is_flag } : el))
+        }
+    }
+
+    const rows = Array(rowNumber).fill(0).map((_, i) =>
+        <SaperRow
+            key={i}
+            columnNumber={columnNumber}
+            rowNumber={rowNumber}
+            rowId={i}
+            allCells={allCells}
+            openCell={openCell}
+            boxSize={boxSize}
+            markAsBomb={markAsBomb} />)
 
     const generateCells = () => {
         const allCells = []
@@ -53,7 +70,7 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
         for (let i = 0; i <= rN - 1; i++) {
             //Generate cells
             for (let j = 0; j <= cN - 1; j++) {
-                const cell = { id: null, opened: false, bordered: false, bomb: false }
+                const cell = { id: null, opened: false, bordered: false, bomb: false, flag: false }
                 const id = i * cN + j + 1
                 //Check if cell is on the border
                 if ((id % columnNumber === 0) || (id % columnNumber === 1) ||
@@ -76,6 +93,7 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
     }
 
 
+
     useEffect(() => {
         generateCells()
     }, [])
@@ -84,7 +102,7 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
     return (
         <>
             <div className='game-bar'>
-                Saper
+                Saper Bomb number: {bombNubmer}
             </div>
             <div className='saper-main-box' style={{ width: boxSize, height: boxSize }}>
                 {gameEnded &&

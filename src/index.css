@@ -7,6 +7,7 @@
 
 body {
   background-color: rgb(15, 15, 15);
+
 }
 
 .saper-main-box {
@@ -42,6 +43,7 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  opacity: 0.8
 }
 
 .game-bar {

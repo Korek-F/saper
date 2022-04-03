@@ -12,6 +12,7 @@ function App() {
   useEffect(() => {
     const height = document.documentElement.clientHeight
     const width = document.documentElement.clientWidth
+    console.log(height, width)
     if (width >= height) {
       setBoxSize(height - 100)
     } else {
@@ -23,17 +24,23 @@ function App() {
   return (
     <>
       {gameStart ?
-        <Saper boxSize={boxSize} rowNumber={rowNumber} columnNumber={columnNumber} bombPercent={bombPercent} />
+        <Saper boxSize={boxSize}
+          rowNumber={rowNumber}
+          columnNumber={columnNumber}
+          bombPercent={bombPercent} />
         :
-        <div className="game-modal">
+        <div className="game-modal"
+          style={{ width: boxSize, height: boxSize }}>
           <label>Rows Number</label>
-          <input type="range" min={5} max={20}
+          <input type="range"
+            min={5} max={20}
             value={rowNumber}
             onChange={(e) => setRowNumber(Number(e.target.value))} />
           {rowNumber}
           <br />
           <label>Columns Number</label>
-          <input type="range" min={5} max={20}
+          <input type="range"
+            min={5} max={20}
             value={columnNumber}
             onChange={(e) => setColumnNumber(Number(e.target.value))} />
           {columnNumber}
