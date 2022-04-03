@@ -5,9 +5,12 @@
   user-select: none;
 }
 
+body {
+  background-color: rgb(15, 15, 15);
+}
+
 .saper-main-box {
-  width: 1700px;
-  height: 900px;
+  margin: 0 auto;
   border: 1px solid black;
 }
 
@@ -20,4 +23,32 @@
   border: 2px solid grey;
   background-color: black;
   color: white;
+  text-align: center;
+  height-line: auto;
+}
+
+.bomb-number {
+  font-size: 40px;
+  color: black;
+}
+
+.game-modal {
+  border: 2px solid black;
+  padding: 20px;
+  width: 600px;
+  height: 400px;
+  position: fixed;
+  background-color: white;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.game-bar {
+  color: white;
+  text-align: center;
+  font-size: 40px;
+  background-color: rgb(99, 0, 0);
+  height: 100px;
+  width: 100%;
 }
