@@ -1,22 +1,22 @@
 import React from 'react'
 import { SaperCell } from './SaperCell'
 
-export const SaperRow = (props) => {
+export const SaperRow = ({ columnNumber, rowId, rowNumber, openCell, boxSize, bombCells, allCells, markAsBomb }) => {
 
-    const columns = Array(props.columnNumber).fill(0).map((_, i) =>
+    const columns = Array(columnNumber).fill(0).map((_, i) =>
         <SaperCell
             key={i}
-            columnNumber={props.columnNumber}
-            rowId={props.rowId}
+            columnNumber={columnNumber}
+            rowId={rowId}
             columnId={i}
-            rowNumber={props.rowNumber}
-            openCell={props.openCell}
-            boxSize={props.boxSize}
-            bombCells={props.bombCells}
-            allCells={props.allCells}
-            markAsBomb={props.markAsBomb} />)
+            rowNumber={rowNumber}
+            openCell={openCell}
+            boxSize={boxSize}
+            bombCells={bombCells}
+            allCells={allCells}
+            markAsBomb={markAsBomb} />)
 
-    const rowHeight = (100 / props.rowNumber) + "%"
+    const rowHeight = (100 / rowNumber) + "%"
     return (
         <div className='saper-row' style={{ height: rowHeight }} >
             {columns}

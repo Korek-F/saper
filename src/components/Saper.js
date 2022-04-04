@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { nextToCells } from '../utils/checkIfIsBorder'
+import { generateAllCells } from '../utils/generateAllCells'
 import { SaperRow } from './SaperRow'
 
 export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
@@ -51,6 +52,11 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
         }
     }
 
+    const restartGame = () => {
+        setAllCells([])
+        setGameEnded(false)
+        generateCells()
+    }
     const rows = Array(rowNumber).fill(0).map((_, i) =>
         <SaperRow
             key={i}
@@ -63,29 +69,7 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
             markAsBomb={markAsBomb} />)
 
     const generateCells = () => {
-        const allCells = []
-        const cN = columnNumber
-        const rN = rowNumber
-        //Generate rows 
-        for (let i = 0; i <= rN - 1; i++) {
-            //Generate cells
-            for (let j = 0; j <= cN - 1; j++) {
-                const cell = { id: null, opened: false, bordered: false, bomb: false, flag: false }
-                const id = i * cN + j + 1
-                //Check if cell is on the border
-                if ((id % columnNumber === 0) || (id % columnNumber === 1) ||
-                    (id > rN * cN - cN) || (id <= cN)) {
-                    cell.bordered = true
-                }
-                //randomize if there is a bomb here
-                const bomb = Math.floor((Math.random() * bombPercent) + 1)
-                if (bomb === 1) cell.bomb = true
-                cell.id = id
-
-
-                allCells.push(cell)
-            }
-        }
+        const allCells = generateAllCells(columnNumber, rowNumber, bombPercent)
         setAllCells(allCells)
         //Cout the number of cells with bomb
         const bomb_cells = allCells.filter(e => e.bomb === true).length
@@ -107,7 +91,8 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
             <div className='saper-main-box' style={{ width: boxSize, height: boxSize }}>
                 {gameEnded &&
                     <div className='game-modal'>
-                        Game Ended
+                        Game Ended <br />
+                        <button onClick={restartGame}>Refresh</button>
                     </div>}
                 {rows}
             </div>

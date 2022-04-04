@@ -27,24 +27,36 @@ function App() {
         <Saper boxSize={boxSize}
           rowNumber={rowNumber}
           columnNumber={columnNumber}
-          bombPercent={bombPercent} />
+          bombPercent={bombPercent}
+        />
         :
         <div className="game-modal"
           style={{ width: boxSize, height: boxSize }}>
+
           <label>Rows Number</label>
           <input type="range"
-            min={5} max={20}
+            min={5} max={30}
             value={rowNumber}
             onChange={(e) => setRowNumber(Number(e.target.value))} />
           {rowNumber}
           <br />
+
           <label>Columns Number</label>
           <input type="range"
-            min={5} max={20}
+            min={5} max={30}
             value={columnNumber}
             onChange={(e) => setColumnNumber(Number(e.target.value))} />
           {columnNumber}
           <br />
+
+          <label>Columns Number</label>
+          <input type="range"
+            min={5} max={60}
+            value={bombPercent}
+            onChange={(e) => setBombPercent(Number(e.target.value))} />
+          {bombPercent}
+          <br />
+
           <button onClick={() => setGameStart(true)}>
             Start Game
           </button>
