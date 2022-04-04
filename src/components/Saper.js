@@ -14,25 +14,13 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
 
         if (!cell_object.opened && !gameEnded && !cell_object.flag) {
 
-            const cN = columnNumber
-            const rN = rowNumber
-            let bomb_count = 0
-            const next_to_cells = nextToCells(cell_object, cN, rN)
-
-            //There I marked all cells that are next to my cell and i checked if there are any bombs
-            next_to_cells.forEach(next_to_cell => {
-                if (allCells.filter(e => e.id === next_to_cell)[0].bomb) {
-                    bomb_count++
-                }
-            })
-            //set number of bomb that are close to the cell
-            setAllCells(state => state.map((el, i) => i + 1 === id ? { ...el, opened: true, bomb_count: bomb_count } : el))
-
             //If the cell has bomb - end the game
             if (cell_object.bomb) {
                 setAllCells(state => state.map((el, i) => el.bomb === true ? { ...el, opened: true } : el))
                 setGameEnded(true)
             }
+
+            setAllCells(state => state.map((el, i) => i + 1 === id ? { ...el, opened: true } : el))
 
             const opened_cells = allCells.filter(e => e.opened === true)
             //If all green cells are opened - end the game
@@ -57,6 +45,38 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
         setGameEnded(false)
         generateCells()
     }
+
+    const generateCells = () => {
+
+        const allCells = generateAllCells(columnNumber, rowNumber, bombPercent)
+
+        //Cout the number of cells with bomb
+        const bomb_cells = allCells.filter(e => e.bomb === true).length
+        setBombNumber(bomb_cells)
+
+        //There I marked all cells that are next to my cell and i checked if there are any bombs
+        const UpdateBombNumberNextToCells = allCells.map(cell => {
+            const next_to_cells = nextToCells(cell, columnNumber, rowNumber)
+            let bomb_count = 0
+            next_to_cells.forEach(next_to_cell => {
+                const cell2 = allCells.filter(e => e.id === next_to_cell)[0]
+                if (cell2.bomb) {
+                    bomb_count += 1
+                }
+            })
+            return { ...cell, bomb_count: bomb_count }
+        })
+
+        setAllCells(UpdateBombNumberNextToCells)
+
+    }
+
+
+
+    useEffect(() => {
+        generateCells()
+    }, [])
+
     const rows = Array(rowNumber).fill(0).map((_, i) =>
         <SaperRow
             key={i}
@@ -67,21 +87,6 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
             openCell={openCell}
             boxSize={boxSize}
             markAsBomb={markAsBomb} />)
-
-    const generateCells = () => {
-        const allCells = generateAllCells(columnNumber, rowNumber, bombPercent)
-        setAllCells(allCells)
-        //Cout the number of cells with bomb
-        const bomb_cells = allCells.filter(e => e.bomb === true).length
-        setBombNumber(bomb_cells)
-    }
-
-
-
-    useEffect(() => {
-        generateCells()
-    }, [])
-
 
     return (
         <>

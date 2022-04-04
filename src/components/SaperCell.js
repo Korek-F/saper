@@ -31,7 +31,7 @@ export const SaperCell = ({
             <div className='bomb-number'
                 style={{ fontSize: (boxSize / columnNumber) / 1.5 }}>
 
-                {(cell?.opened && !cell?.bomb && cell.bomb_count !== 0) ? cell.bomb_count : ""}
+                {(cell?.opened && !cell?.bomb && cell?.bomb_count !== 0) ? cell?.bomb_count : ""}
             </div>
         </div>
     )

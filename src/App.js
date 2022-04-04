@@ -3,8 +3,8 @@ import { Saper } from "./components/Saper";
 
 function App() {
   const [boxSize, setBoxSize] = useState()
-  const [rowNumber, setRowNumber] = useState(10)
-  const [columnNumber, setColumnNumber] = useState(10)
+  const [rowNumber, setRowNumber] = useState(5)
+  const [columnNumber, setColumnNumber] = useState(5)
   const [bombPercent, setBombPercent] = useState(8)
   const [gameStart, setGameStart] = useState(false)
 
@@ -49,7 +49,7 @@ function App() {
           {columnNumber}
           <br />
 
-          <label>Columns Number</label>
+          <label>Bomb Number</label>
           <input type="range"
             min={5} max={60}
             value={bombPercent}

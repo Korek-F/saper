@@ -6,7 +6,7 @@ export const generateAllCells = (columnNumber, rowNumber, bombPercent) => {
     for (let i = 0; i <= rN - 1; i++) {
         //Generate cells
         for (let j = 0; j <= cN - 1; j++) {
-            const cell = { id: null, opened: false, bordered: false, bomb: false, flag: false }
+            const cell = { id: null, opened: false, bordered: false, bomb: false, flag: false, bomb_count: 0 }
             const id = i * cN + j + 1
             //Check if cell is on the border
             if ((id % columnNumber === 0) || (id % columnNumber === 1) ||
