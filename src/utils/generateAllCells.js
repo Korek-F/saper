@@ -14,7 +14,7 @@ export const generateAllCells = (columnNumber, rowNumber, bombPercent) => {
                 cell.bordered = true
             }
             //randomize if there is a bomb here
-            const bomb = Math.floor((Math.random() * bombPercent) + 1)
+            const bomb = Math.floor((Math.random() * 100 / bombPercent) + 1)
             if (bomb === 1) cell.bomb = true
             cell.id = id
 

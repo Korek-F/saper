@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { nextToCells } from '../utils/checkIfIsBorder'
 import { generateAllCells } from '../utils/generateAllCells'
 import { SaperRow } from './SaperRow'
 
-export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
+export const Saper = ({ boxSize, rowNumber,
+    columnNumber, bombPercent, alcomode }) => {
 
     const [allCells, setAllCells] = useState([])
     const [gameEnded, setGameEnded] = useState(false)
     const [bombNubmer, setBombNumber] = useState(null)
+    const [startTime, setStartTime] = useState(null)
+    const [finishTime, setFinishTime] = useState(null)
+    const [isWin, setIsWin] = useState(false)
+    const [cellSize, setCellSize] = useState(20)
+
+    const mainBoxRef = useRef()
 
     const openCell = (id) => {
         const cell_object = allCells.filter(e => e.id === id)[0]
@@ -22,15 +29,16 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
 
             setAllCells(state => state.map((el, i) => i + 1 === id ? { ...el, opened: true } : el))
 
-            const opened_cells = allCells.filter(e => e.opened === true)
-            //If all green cells are opened - end the game
-            if (opened_cells.length + 1 + bombNubmer === allCells.length) {
-                console.log("ended")
-                setGameEnded(true)
+            if (cell_object.bomb_count === 0) {
+                const next_to_cells = nextToCells(cell_object, columnNumber, rowNumber)
+                next_to_cells.forEach(e => {
+                    setAllCells(state => state.map((el, i) => el.id === e && el.flag === false ? { ...el, opened: true } : el))
+                })
             }
-
         }
     }
+
+
 
     const markAsBomb = (id) => {
         const cell_object = allCells.filter(e => e.id === id)[0]
@@ -43,6 +51,9 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
     const restartGame = () => {
         setAllCells([])
         setGameEnded(false)
+        setIsWin(false)
+        const date = new Date()
+        setStartTime(date.getTime() / 1000)
         generateCells()
     }
 
@@ -65,8 +76,8 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
                 }
             })
             return { ...cell, bomb_count: bomb_count }
-        })
 
+        })
         setAllCells(UpdateBombNumberNextToCells)
 
     }
@@ -74,8 +85,34 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
 
 
     useEffect(() => {
+        const date = new Date()
+        setStartTime(date.getTime() / 1000)
         generateCells()
+        //calculate the cell size
+        if (columnNumber > rowNumber) {
+            setCellSize(boxSize / columnNumber)
+        } else {
+            setCellSize(boxSize / rowNumber)
+        }
+        //Check if alcomode is on
+        if (alcomode) {
+            mainBoxRef.current.style["filter"] = "blur(5px)"
+        }
+
     }, [])
+
+    //If all green cells are opened - end the game
+    useEffect(() => {
+        const opened_cells = allCells.filter(e => e.opened === true)
+        if (opened_cells.length + bombNubmer === allCells.length && allCells.length > 24) {
+            const date = new Date()
+            setIsWin(true)
+            setFinishTime(date.getTime() / 1000)
+            setGameEnded(true)
+        }
+    }, [allCells])
+
+
 
     const rows = Array(rowNumber).fill(0).map((_, i) =>
         <SaperRow
@@ -86,36 +123,51 @@ export const Saper = ({ boxSize, rowNumber, columnNumber, bombPercent }) => {
             allCells={allCells}
             openCell={openCell}
             boxSize={boxSize}
-            markAsBomb={markAsBomb} />)
+            markAsBomb={markAsBomb}
+            cellSize={cellSize}
+        />)
 
     return (
         <>
             <div className='game-bar'>
-                Saper Bomb number: {bombNubmer}
+                Bombs: {bombNubmer}
             </div>
-            <div className='saper-main-box' style={{ width: boxSize, height: boxSize }}>
-                {gameEnded &&
-                    <div className='game-modal'>
-                        Game Ended <br />
-                        <button onClick={restartGame}>Refresh</button>
-                    </div>}
+            <div className='saper-main-box'
+                ref={mainBoxRef}
+                style={{
+                    width: cellSize * columnNumber,
+                    height: cellSize * rowNumber
+                }}>
                 {rows}
             </div>
+            {gameEnded &&
+                <div className='game-modal'
+                    style={{
+                        width: boxSize,
+                        height: boxSize,
+                        fontSize: boxSize / 22 + "px",
+                    }}>
+                    Game Ended <br />
+                    {isWin &&
+                        <>
+                            Time: &nbsp;
+                            {Math.floor(finishTime - startTime) >= 60 ?
+
+                                Math.floor(Math.floor(finishTime - startTime) / 60) + ":" +
+                                (Math.floor(finishTime - startTime) % 60 < 10 ?
+                                    "0" + Math.floor(finishTime - startTime) % 60 :
+                                    Math.floor(finishTime - startTime) % 60
+                                ) :
+
+                                Math.floor(finishTime - startTime) < 10 ?
+                                    "0:0" + Math.floor(finishTime - startTime) :
+                                    "0:" + Math.floor(finishTime - startTime)}
+                        </>
+                    }<br />
+
+                    <button onClick={restartGame}>Refresh</button>
+                </div>}
         </>
     )
 }
 
-/*
- const generateBombs = () => {
-        const range = rowNumber * columnNumber
-        const bomb_ids = []
-        let i = 0
-        while (i < bombNumber) {
-            const bomb = Math.floor((Math.random() * range) + 1)
-            if (!bomb_ids.includes(bomb)) {
-                bomb_ids.push(bomb)
-                i++
-            }
-        }
-        setBombCells(bomb_ids)
-    }*/

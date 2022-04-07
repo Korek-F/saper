@@ -1,19 +1,20 @@
 import React from 'react'
+import { BsFlag } from 'react-icons/bs'
 
 export const SaperCell = ({
     columnNumber, rowId,
     columnId, allCells,
     openCell, boxSize,
-    markAsBomb }) => {
+    markAsBomb, cellSize }) => {
 
-    const cellWidth = (100 / columnNumber) + "%"
     const id = rowId * columnNumber + columnId + 1;
     const cell = allCells[id - 1]
-    let cell_color = cell?.opened ?
-        (cell?.bomb ? "red" : "green")
-        : "grey";
+    let cell_class = cell?.opened ?
+        (cell?.bomb ? "bomb" : "opened")
+        : "unopened";
+
     if (cell?.flag) {
-        cell_color = "blue"
+        cell_class = "flag"
     }
     const handleClick = (e) => {
         e.preventDefault();
@@ -24,14 +25,22 @@ export const SaperCell = ({
         }
     };
     return (
-        <div className='saper-cell'
+        <div className={cell_class + " saper-cell"}
             onClick={handleClick}
             onContextMenu={handleClick}
-            style={{ width: cellWidth, backgroundColor: cell_color }}>
+            style={{
+                width: cellSize + "px",
+                height: cellSize + "px",
+                lineHeight: cellSize + "px"
+            }}>
             <div className='bomb-number'
-                style={{ fontSize: (boxSize / columnNumber) / 1.5 }}>
+                style={{ fontSize: cellSize / 1.5 }}>
 
-                {(cell?.opened && !cell?.bomb && cell?.bomb_count !== 0) ? cell?.bomb_count : ""}
+                {(cell?.opened && !cell?.bomb && cell?.bomb_count !== 0) ?
+                    cell?.bomb_count
+                    : ""}
+
+                {cell?.flag && <BsFlag />}
             </div>
         </div>
     )

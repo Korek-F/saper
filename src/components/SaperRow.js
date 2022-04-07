@@ -1,7 +1,7 @@
 import React from 'react'
 import { SaperCell } from './SaperCell'
 
-export const SaperRow = ({ columnNumber, rowId, rowNumber, openCell, boxSize, bombCells, allCells, markAsBomb }) => {
+export const SaperRow = ({ columnNumber, rowId, rowNumber, openCell, boxSize, bombCells, allCells, markAsBomb, cellSize }) => {
 
     const columns = Array(columnNumber).fill(0).map((_, i) =>
         <SaperCell
@@ -14,9 +14,10 @@ export const SaperRow = ({ columnNumber, rowId, rowNumber, openCell, boxSize, bo
             boxSize={boxSize}
             bombCells={bombCells}
             allCells={allCells}
-            markAsBomb={markAsBomb} />)
+            markAsBomb={markAsBomb}
+            cellSize={cellSize} />)
 
-    const rowHeight = (100 / rowNumber) + "%"
+    const rowHeight = Math.floor(cellSize) + "px"
     return (
         <div className='saper-row' style={{ height: rowHeight }} >
             {columns}
